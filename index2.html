@@ -1,0 +1,727 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,'Inter',sans-serif;background:#07070F;color:#E2E2F0;font-size:13px;height:100vh;overflow:hidden}
+:root{
+  --bg:#07070F;--bg1:#0C0C18;--bg2:#121220;--bg3:#1A1A2E;--bg4:#22223A;
+  --b:rgba(255,255,255,.05);--b2:rgba(255,255,255,.09);--b3:rgba(255,255,255,.15);
+  --t:#E2E2F0;--t2:#7878A0;--t3:#3A3A5C;--t4:#B0B0D0;
+  --ac:#6366F1;--ac2:#818CF8;--ac3:rgba(99,102,241,.12);
+  --gr:#10B981;--gr2:#34D399;--gr3:rgba(16,185,129,.1);
+  --am:#F59E0B;--am2:rgba(245,158,11,.1);
+  --rd:#EF4444;--rd2:rgba(239,68,68,.1);
+  --pu:#A855F7;--pu2:rgba(168,85,247,.1);
+  --wa:#25D366;--sms:#30D158;--wc:#6366F1;--ph:#F59E0B
+}
+/* ── SHELL ── */
+.app{height:100vh;display:flex;flex-direction:column}
+/* TOP BAR */
+.topbar{height:48px;background:var(--bg1);border-bottom:1px solid var(--b2);display:flex;align-items:center;padding:0 16px;gap:10px;flex-shrink:0;z-index:10}
+.logo{display:flex;align-items:center;gap:8px}
+.logo-mark{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#6366F1,#8B5CF6);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.logo-text{font-size:14px;font-weight:600;background:linear-gradient(90deg,#fff,#A5B4FC);-webkit-background-clip:text;-webkit-text-fill-color:transparent;white-space:nowrap}
+.top-div{width:1px;height:20px;background:var(--b2)}
+.top-nav{display:flex;gap:2px}
+.tnav{display:flex;align-items:center;gap:5px;padding:5px 11px;font-size:12px;font-weight:500;border:1px solid transparent;border-radius:7px;background:none;cursor:pointer;color:var(--t2);transition:all .12s}
+.tnav:hover{color:var(--t);background:var(--bg2)}
+.tnav.on{background:var(--bg3);border-color:var(--b2);color:var(--t)}
+.top-r{margin-left:auto;display:flex;align-items:center;gap:8px}
+.badge-live{display:flex;align-items:center;gap:4px;font-size:11px;font-weight:500;padding:3px 9px;background:var(--gr3);border:1px solid rgba(16,185,129,.2);border-radius:20px;color:var(--gr)}
+.ld{width:5px;height:5px;border-radius:50%;background:var(--gr);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.ai-badge{font-size:11px;padding:3px 9px;background:var(--ac3);border:1px solid rgba(99,102,241,.2);border-radius:20px;color:var(--ac2);font-weight:500}
+.avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#6366F1,#A855F7);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:white;flex-shrink:0;cursor:pointer}
+
+/* ── SECTIONS ── */
+.sec{display:none;flex:1;overflow:hidden}
+.sec.on{display:flex}
+
+/* ═══════════════════════════
+   INBOX SECTION
+═══════════════════════════ */
+.inbox{display:flex;flex:1;overflow:hidden}
+
+/* LEFT: conversation list */
+.conv-panel{width:280px;flex-shrink:0;border-right:1px solid var(--b);display:flex;flex-direction:column;background:var(--bg1)}
+.conv-top{padding:12px;border-bottom:1px solid var(--b);flex-shrink:0}
+.conv-title{font-size:14px;font-weight:600;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
+.unread-ct{font-size:10px;font-weight:600;padding:2px 7px;background:var(--ac);border-radius:10px;color:white}
+.search-box{display:flex;align-items:center;gap:7px;background:var(--bg2);border:1px solid var(--b2);border-radius:8px;padding:6px 10px}
+.search-box input{flex:1;background:none;border:none;outline:none;font-size:12px;color:var(--t);font-family:inherit}
+.search-box input::placeholder{color:var(--t3)}
+.ch-filters{display:flex;gap:4px;margin-top:8px;flex-wrap:wrap}
+.cf{padding:3px 9px;font-size:11px;font-weight:500;border:1px solid var(--b2);border-radius:20px;cursor:pointer;color:var(--t2);background:none;transition:all .12s;white-space:nowrap}
+.cf:hover{color:var(--t);border-color:var(--b3)}
+.cf.on{color:white;border-color:transparent}
+.cf[data-ch="all"].on{background:var(--ac)}
+.cf[data-ch="wa"].on{background:var(--wa)}
+.cf[data-ch="sms"].on{background:var(--sms)}
+.cf[data-ch="wc"].on{background:var(--wc)}
+.cf[data-ch="ph"].on{background:var(--ph)}
+.conv-list{flex:1;overflow-y:auto}
+.conv-item{padding:10px 12px;border-bottom:1px solid var(--b);cursor:pointer;transition:background .1s;display:flex;gap:9px;align-items:flex-start;position:relative}
+.conv-item:hover{background:var(--bg2)}
+.conv-item.on{background:var(--bg3);border-right:2px solid var(--ac)}
+.conv-item.unread .conv-name{font-weight:600;color:var(--t)}
+.conv-av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;position:relative}
+.ch-badge{position:absolute;bottom:-2px;right:-2px;width:14px;height:14px;border-radius:50%;border:2px solid var(--bg1);display:flex;align-items:center;justify-content:center;font-size:7px}
+.conv-body{flex:1;min-width:0}
+.conv-row1{display:flex;align-items:center;justify-content:space-between;margin-bottom:2px}
+.conv-name{font-size:12.5px;color:var(--t4);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;min-width:0}
+.conv-time{font-size:10px;color:var(--t3);flex-shrink:0;margin-left:6px}
+.conv-preview{font-size:11.5px;color:var(--t2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:3px}
+.conv-tags{display:flex;gap:3px;flex-wrap:wrap}
+.tag{font-size:10px;padding:1px 6px;border-radius:8px;font-weight:500}
+.tag-ai{background:var(--ac3);color:var(--ac2)}
+.tag-book{background:var(--gr3);color:var(--gr2)}
+.tag-esc{background:var(--rd2);color:var(--rd)}
+.tag-new{background:var(--am2);color:var(--am)}
+.unread-dot{width:7px;height:7px;border-radius:50%;background:var(--ac);flex-shrink:0;margin-top:4px}
+
+/* MIDDLE: conversation thread */
+.thread-panel{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;background:var(--bg)}
+.thread-hdr{height:52px;border-bottom:1px solid var(--b);padding:0 16px;display:flex;align-items:center;gap:10px;flex-shrink:0;background:var(--bg1)}
+.th-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.th-name{font-size:13px;font-weight:600}
+.th-sub{font-size:11px;color:var(--t2)}
+.th-r{margin-left:auto;display:flex;gap:6px;align-items:center}
+.th-btn{padding:5px 12px;font-size:11.5px;border:1px solid var(--b2);border-radius:7px;background:none;color:var(--t2);cursor:pointer;transition:all .12s}
+.th-btn:hover{background:var(--bg2);color:var(--t)}
+.th-btn.esc{border-color:rgba(239,68,68,.3);color:var(--rd)}
+.ai-toggle{display:flex;align-items:center;gap:6px;padding:5px 10px;background:var(--ac3);border:1px solid rgba(99,102,241,.2);border-radius:7px;cursor:pointer}
+.ai-toggle-dot{width:8px;height:8px;border-radius:50%;background:var(--ac);animation:pulse 2s infinite}
+.ai-toggle span{font-size:11px;font-weight:500;color:var(--ac2)}
+.thread-msgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px}
+/* Messages */
+.msg-group{display:flex;flex-direction:column;gap:4px}
+.msg-row{display:flex;gap:8px;align-items:flex-end}
+.msg-row.out{flex-direction:row-reverse}
+.msg-av{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0}
+.bubble{max-width:68%;padding:9px 13px;font-size:12.5px;line-height:1.55;word-break:break-word;position:relative}
+.bubble.in{background:var(--bg2);border:1px solid var(--b2);border-radius:12px 12px 12px 3px;color:var(--t)}
+.bubble.out{background:var(--ac);border-radius:12px 12px 3px 12px;color:white}
+.bubble.ai-out{background:linear-gradient(135deg,#4F46E5,#7C3AED);border-radius:12px 12px 3px 12px;color:white}
+.msg-meta{font-size:10px;color:var(--t3);margin-top:2px;padding:0 4px}
+.msg-row.out .msg-meta{text-align:right}
+.ai-label{font-size:9px;font-weight:600;color:var(--ac2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px}
+/* System msgs */
+.sys-msg{text-align:center;font-size:11px;color:var(--t3);display:flex;align-items:center;gap:8px;margin:4px 0}
+.sys-msg::before,.sys-msg::after{content:'';flex:1;height:1px;background:var(--b)}
+/* Typing indicator */
+.typing-row{display:flex;gap:8px;align-items:flex-end}
+.typing-bub{background:var(--bg2);border:1px solid var(--b2);border-radius:12px 12px 12px 3px;padding:10px 14px;display:flex;gap:4px}
+.td{width:6px;height:6px;border-radius:50%;background:var(--t3);animation:tbop .8s ease-in-out infinite}
+.td:nth-child(2){animation-delay:.15s}.td:nth-child(3){animation-delay:.3s}
+@keyframes tbop{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
+/* Composer */
+.composer{border-top:1px solid var(--b);flex-shrink:0;background:var(--bg1)}
+.composer-tabs{display:flex;padding:0 14px;border-bottom:1px solid var(--b);gap:0}
+.ctab{padding:7px 12px;font-size:11.5px;cursor:pointer;border:none;background:none;color:var(--t2);border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .12s}
+.ctab.on{color:var(--t);border-bottom-color:var(--ac)}
+.compose-area{padding:10px 14px;display:flex;flex-direction:column;gap:8px}
+.compose-top{display:flex;gap:6px;align-items:flex-start}
+.compose-inp{flex:1;background:var(--bg2);border:1px solid var(--b2);border-radius:9px;padding:9px 12px;font-size:12.5px;color:var(--t);outline:none;font-family:inherit;resize:none;min-height:56px;max-height:100px;line-height:1.5;transition:border-color .12s}
+.compose-inp:focus{border-color:var(--ac)}
+.compose-inp::placeholder{color:var(--t3)}
+.compose-actions{display:flex;align-items:center;gap:6px}
+.c-act{padding:5px;border:1px solid var(--b2);border-radius:7px;background:none;color:var(--t2);cursor:pointer;font-size:14px;line-height:1}
+.c-act:hover{background:var(--bg2);color:var(--t)}
+.send-btn{display:flex;align-items:center;gap:6px;padding:7px 16px;background:var(--ac);border:none;border-radius:8px;color:white;font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap;transition:background .12s}
+.send-btn:hover{background:var(--ac2)}
+.send-btn:disabled{opacity:.4;cursor:default}
+.ai-suggest{background:var(--ac3);border:1px solid rgba(99,102,241,.18);border-radius:8px;padding:8px 11px;display:flex;gap:8px;align-items:flex-start}
+.ai-suggest-icon{font-size:13px;flex-shrink:0}
+.ai-suggest-txt{font-size:11.5px;color:var(--t4);flex:1;line-height:1.5}
+.ai-use-btn{font-size:11px;padding:3px 10px;background:var(--ac);border:none;border-radius:6px;color:white;cursor:pointer;flex-shrink:0;font-weight:500}
+.compose-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.char-ct{font-size:10.5px;color:var(--t3)}
+
+/* RIGHT: guest details */
+.guest-panel{width:240px;flex-shrink:0;border-left:1px solid var(--b);display:flex;flex-direction:column;background:var(--bg1);overflow-y:auto}
+.gp-section{padding:12px;border-bottom:1px solid var(--b)}
+.gp-lbl{font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:9px}
+.gp-av{width:44px;height:44px;border-radius:50%;margin:0 auto 9px;font-size:20px;display:flex;align-items:center;justify-content:center}
+.gp-name{font-size:13px;font-weight:600;text-align:center;margin-bottom:2px}
+.gp-ch{text-align:center;font-size:11px;color:var(--t2);margin-bottom:10px}
+.gp-row{display:flex;justify-content:space-between;font-size:11.5px;margin-bottom:6px}
+.gp-key{color:var(--t2)}.gp-val{color:var(--t);font-weight:500;text-align:right;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.status-chip{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:500}
+.sc-new{background:var(--am2);color:var(--am)}
+.sc-active{background:var(--gr3);color:var(--gr)}
+.sc-book{background:var(--ac3);color:var(--ac2)}
+.sc-esc{background:var(--rd2);color:var(--rd)}
+.book-card{background:var(--bg2);border:1px solid var(--b2);border-radius:8px;padding:9px;margin-bottom:7px}
+.book-prop{font-size:12px;font-weight:600;margin-bottom:5px}
+.book-row{display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px;color:var(--t2)}
+.book-val{color:var(--t);font-weight:500}
+.notes-inp{width:100%;background:var(--bg2);border:1px solid var(--b2);border-radius:7px;padding:7px 9px;font-size:11.5px;color:var(--t);outline:none;font-family:inherit;resize:vertical;min-height:56px;line-height:1.5}
+.notes-inp:focus{border-color:var(--ac)}
+.quick-acts{display:flex;flex-direction:column;gap:5px}
+.qa{padding:6px 10px;background:var(--bg2);border:1px solid var(--b2);border-radius:7px;font-size:11.5px;color:var(--t2);cursor:pointer;text-align:left;transition:all .12s}
+.qa:hover{background:var(--bg3);color:var(--t);border-color:var(--b3)}
+
+/* ═══════════════════════════
+   CHAT WIDGET SECTION
+═══════════════════════════ */
+.widget-sec{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--bg)}
+.widget-top{padding:16px 20px;border-bottom:1px solid var(--b);background:var(--bg1);flex-shrink:0}
+.widget-top h2{font-size:15px;font-weight:600;margin-bottom:3px}
+.widget-top p{font-size:12px;color:var(--t2)}
+.widget-body{flex:1;display:flex;overflow:hidden;gap:0}
+/* Config panel */
+.wcfg{width:300px;flex-shrink:0;border-right:1px solid var(--b);padding:16px;overflow-y:auto;display:flex;flex-direction:column;gap:14px}
+.wcfg-sec{display:flex;flex-direction:column;gap:8px}
+.wcfg-lbl{font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.08em}
+.wfld label{font-size:11px;color:var(--t2);display:block;margin-bottom:3px}
+.wfld input,.wfld select,.wfld textarea{width:100%;background:var(--bg2);border:1px solid var(--b2);border-radius:7px;padding:6px 9px;font-size:12px;color:var(--t);outline:none;font-family:inherit}
+.wfld input:focus,.wfld select:focus{border-color:var(--ac)}
+.wfld select option{background:var(--bg2)}
+.color-row{display:flex;gap:6px;flex-wrap:wrap}
+.color-swatch{width:24px;height:24px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:transform .12s}
+.color-swatch:hover{transform:scale(1.15)}
+.color-swatch.sel{border-color:white;transform:scale(1.15)}
+.tog{display:flex;align-items:center;gap:7px;cursor:pointer}
+.tog-t{width:32px;height:17px;border-radius:9px;background:var(--b2);position:relative;transition:background .15s;flex-shrink:0}
+.tog-t.on{background:var(--ac)}
+.tog-t::after{content:'';width:12px;height:12px;border-radius:50%;background:white;position:absolute;top:2.5px;left:2.5px;transition:left .15s}
+.tog-t.on::after{left:17.5px}
+.tog-l{font-size:12px;color:var(--t2)}
+.apply-btn{width:100%;padding:9px;background:var(--ac);border:none;border-radius:8px;color:white;font-size:12.5px;font-weight:600;cursor:pointer}
+.apply-btn:hover{background:var(--ac2)}
+/* Preview area */
+.wprev{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;gap:20px;background:var(--bg);position:relative;overflow:hidden}
+.wprev-bg{position:absolute;inset:0;background:linear-gradient(135deg,rgba(99,102,241,.03) 0%,transparent 60%);pointer-events:none}
+.wprev-label{font-size:11px;color:var(--t3);font-weight:600;text-transform:uppercase;letter-spacing:.08em;position:absolute;top:16px;left:0;right:0;text-align:center}
+/* Fake website bg */
+.fake-site{width:100%;max-width:620px;background:#F8F9FA;border-radius:12px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.08);position:relative}
+.fake-nav{height:44px;background:white;border-bottom:1px solid #E5E7EB;display:flex;align-items:center;padding:0 16px;gap:12px}
+.fake-logo{width:80px;height:10px;background:#E5E7EB;border-radius:5px}
+.fake-links{display:flex;gap:12px;margin-left:auto}
+.fake-link{width:40px;height:8px;background:#E5E7EB;border-radius:4px}
+.fake-hero{background:linear-gradient(135deg,#667EEA,#764BA2);height:100px;display:flex;align-items:center;justify-content:center}
+.fake-hero-txt{color:white;font-size:14px;font-weight:600;opacity:.9}
+.fake-content{padding:14px;display:flex;gap:10px}
+.fake-card{flex:1;height:50px;background:#F3F4F6;border-radius:8px}
+/* Chat widget */
+.chat-widget{position:absolute;bottom:16px;right:16px;display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+.cw-bubble{background:white;border-radius:12px 12px 3px 12px;padding:9px 13px;font-size:12px;color:#111;box-shadow:0 4px 20px rgba(0,0,0,.15);max-width:180px;line-height:1.4;animation:cwpop .3s ease}
+@keyframes cwpop{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.cw-window{width:300px;background:white;border-radius:12px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.2);animation:cwpop .25s ease}
+.cw-hdr{padding:11px 13px;display:flex;align-items:center;gap:9px}
+.cw-hdr-av{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.cw-hdr-n{font-size:12.5px;font-weight:600;color:white}
+.cw-hdr-s{font-size:10px;color:rgba(255,255,255,.7)}
+.cw-hdr-ol{margin-left:auto;font-size:10px;color:rgba(255,255,255,.8);display:flex;align-items:center;gap:3px}
+.cw-msgs{height:200px;overflow-y:auto;padding:10px;background:#F9FAFB;display:flex;flex-direction:column;gap:6px}
+.cwm{max-width:80%;padding:7px 10px;font-size:11.5px;line-height:1.45;word-break:break-word;border-radius:10px}
+.cwm.r{background:white;color:#111;align-self:flex-start;border-radius:10px 10px 10px 3px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.cwm.s{color:white;align-self:flex-end;border-radius:10px 10px 3px 10px}
+.cw-inp-row{display:flex;gap:5px;padding:8px 10px;border-top:1px solid #E5E7EB;background:white}
+.cw-inp{flex:1;border:1px solid #E5E7EB;border-radius:7px;padding:6px 10px;font-size:12px;outline:none;font-family:inherit;color:#111}
+.cw-send{padding:6px 11px;border:none;border-radius:7px;color:white;font-size:12px;font-weight:600;cursor:pointer}
+.cw-fab{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 4px 16px rgba(0,0,0,.25);cursor:pointer;border:none;transition:transform .15s}
+.cw-fab:hover{transform:scale(1.07)}
+/* Code snippet */
+.code-area{padding:16px;background:var(--bg1);border-top:1px solid var(--b)}
+.code-lbl{font-size:11px;font-weight:600;color:var(--t2);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
+.code-box{background:var(--bg);border:1px solid var(--b2);border-radius:8px;padding:11px 13px;font-family:monospace;font-size:11px;color:#A5B4FC;line-height:1.6;overflow-x:auto;white-space:nowrap}
+.code-str{color:#86EFAC}.code-tag{color:#F9A8D4}.code-attr{color:#FCD34D}.code-cmt{color:#4B5563}
+.copy-code-btn{padding:4px 11px;background:var(--bg2);border:1px solid var(--b2);border-radius:6px;color:var(--t2);font-size:11px;cursor:pointer}
+.copy-code-btn:hover{background:var(--bg3);color:var(--t)}
+
+/* Scrollbars */
+::-webkit-scrollbar{width:3px;height:3px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--b2);border-radius:2px}
+</style>
+
+<div class="app">
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="logo"><div class="logo-mark">🏖️</div><span class="logo-text">RealCentral AI</span></div>
+  <div class="top-div"></div>
+  <div class="top-nav">
+    <button class="tnav on" onclick="showSec('inbox',this)">💬 Unified Inbox</button>
+    <button class="tnav" onclick="showSec('widget',this)">🔌 Web Chat Widget</button>
+  </div>
+  <div class="top-r">
+    <span class="badge-live"><span class="ld"></span>All channels live</span>
+    <span class="ai-badge">🤖 AI handling 100%</span>
+    <div class="avatar">PM</div>
+  </div>
+</div>
+
+<!-- ═══════ INBOX ═══════ -->
+<div class="sec on" id="sec-inbox">
+<div class="inbox">
+
+  <!-- CONVERSATION LIST -->
+  <div class="conv-panel">
+    <div class="conv-top">
+      <div class="conv-title">Conversations <span class="unread-ct" id="unread-ct">4</span></div>
+      <div class="search-box"><span style="color:var(--t3);font-size:13px">🔍</span><input placeholder="Search conversations..." oninput="filterConvs(this.value)"></div>
+      <div class="ch-filters">
+        <button class="cf on" data-ch="all" onclick="filterCh('all',this)">All</button>
+        <button class="cf" data-ch="wa" onclick="filterCh('wa',this)" style="color:var(--wa)">💬 WA</button>
+        <button class="cf" data-ch="sms" onclick="filterCh('sms',this)" style="color:var(--sms)">📱 SMS</button>
+        <button class="cf" data-ch="wc" onclick="filterCh('wc',this)" style="color:var(--wc)">🌐 Web</button>
+      </div>
+    </div>
+    <div class="conv-list" id="conv-list"></div>
+  </div>
+
+  <!-- THREAD -->
+  <div class="thread-panel">
+    <div class="thread-hdr" id="thread-hdr">
+      <div style="color:var(--t3);font-size:12px">Select a conversation to start</div>
+    </div>
+    <div class="thread-msgs" id="thread-msgs">
+      <div style="flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;color:var(--t3)">
+        <div style="font-size:32px">💬</div>
+        <div style="font-size:13px">Select a conversation from the list</div>
+      </div>
+    </div>
+    <div class="composer" id="composer" style="display:none">
+      <div class="composer-tabs">
+        <button class="ctab on" onclick="setCTab(this,'reply')">Reply</button>
+        <button class="ctab" onclick="setCTab(this,'note')">📝 Internal note</button>
+        <button class="ctab" onclick="setCTab(this,'ai')">🤖 AI draft</button>
+      </div>
+      <div class="compose-area">
+        <div class="ai-suggest" id="ai-suggest" style="display:none">
+          <span class="ai-suggest-icon">🤖</span>
+          <span class="ai-suggest-txt" id="ai-suggest-txt">AI is drafting a response...</span>
+          <button class="ai-use-btn" onclick="useAiSuggest()">Use</button>
+        </div>
+        <div class="compose-top">
+          <textarea class="compose-inp" id="compose-inp" placeholder="Type a reply..." rows="2" onkeydown="handleCompose(event)" oninput="updateCharCount()"></textarea>
+        </div>
+        <div class="compose-row">
+          <div style="display:flex;gap:5px">
+            <button class="c-act" title="Emoji">😊</button>
+            <button class="c-act" title="Attachment">📎</button>
+            <button class="c-act" title="Quick replies" onclick="insertQuick()">⚡</button>
+            <button class="c-act" title="AI rephrase" onclick="aiRephrase()">✨</button>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="char-ct" id="char-ct">0 / 500</span>
+            <button class="send-btn" id="send-btn" onclick="sendReply()">Send ➤</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GUEST PANEL -->
+  <div class="guest-panel" id="guest-panel">
+    <div style="padding:40px 16px;text-align:center;color:var(--t3)">
+      <div style="font-size:28px;margin-bottom:8px">👤</div>
+      <div style="font-size:12px">Guest details appear here</div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ═══════ WEB CHAT WIDGET ═══════ -->
+<div class="sec" id="sec-widget">
+<div class="widget-sec">
+  <div class="widget-top">
+    <h2>Web Chat Widget</h2>
+    <p>Configure and preview your embeddable AI chat widget. Copy the code snippet and paste it into any website.</p>
+  </div>
+  <div class="widget-body">
+    <!-- Config -->
+    <div class="wcfg">
+      <div class="wcfg-sec">
+        <div class="wcfg-lbl">Branding</div>
+        <div class="wfld"><label>Company name</label><input id="wc-name" value="Azure Villas" oninput="updateWidget()"></div>
+        <div class="wfld"><label>AI agent name</label><input id="wc-agent" value="Maya" oninput="updateWidget()"></div>
+        <div class="wfld"><label>Welcome message</label><textarea id="wc-welcome" rows="2" oninput="updateWidget()" style="min-height:52px">Hi! 👋 I'm Maya, your 24/7 AI concierge. Ask me anything about bookings, check-in, or your stay!</textarea></div>
+      </div>
+      <div class="wcfg-sec">
+        <div class="wcfg-lbl">Accent color</div>
+        <div class="color-row" id="color-row">
+          <div class="color-swatch sel" data-c="#6366F1" style="background:#6366F1" onclick="setColor(this)"></div>
+          <div class="color-swatch" data-c="#10B981" style="background:#10B981" onclick="setColor(this)"></div>
+          <div class="color-swatch" data-c="#F59E0B" style="background:#F59E0B" onclick="setColor(this)"></div>
+          <div class="color-swatch" data-c="#EF4444" style="background:#EF4444" onclick="setColor(this)"></div>
+          <div class="color-swatch" data-c="#8B5CF6" style="background:#8B5CF6" onclick="setColor(this)"></div>
+          <div class="color-swatch" data-c="#EC4899" style="background:#EC4899" onclick="setColor(this)"></div>
+          <div class="color-swatch" data-c="#0EA5E9" style="background:#0EA5E9" onclick="setColor(this)"></div>
+          <div class="color-swatch" data-c="#1C1C2B" style="background:#1C1C2B;border:1px solid rgba(255,255,255,.2)" onclick="setColor(this)"></div>
+        </div>
+      </div>
+      <div class="wcfg-sec">
+        <div class="wcfg-lbl">Behavior</div>
+        <div class="tog" onclick="toggleW('auto-open',this)"><div class="tog-t"></div><span class="tog-l">Auto-open after 8 seconds</span></div>
+        <div class="tog" onclick="toggleW('sound',this)"><div class="tog-t on"></div><span class="tog-l">Sound on new message</span></div>
+        <div class="tog" onclick="toggleW('bubble',this)"><div class="tog-t on"></div><span class="tog-l">Show greeting bubble</span></div>
+        <div class="tog" onclick="toggleW('powered',this)"><div class="tog-t on"></div><span class="tog-l">Show "Powered by RealCentral"</span></div>
+      </div>
+      <div class="wcfg-sec">
+        <div class="wcfg-lbl">Position</div>
+        <div class="wfld"><label>Widget position</label>
+          <select id="wc-pos" oninput="updateWidget()"><option>Bottom right</option><option>Bottom left</option></select>
+        </div>
+      </div>
+      <button class="apply-btn" onclick="updateWidget()">Apply changes</button>
+    </div>
+    <!-- Preview -->
+    <div class="wprev">
+      <div class="wprev-bg"></div>
+      <div class="wprev-label">Live preview — how it looks on client's website</div>
+      <div class="fake-site">
+        <div class="fake-nav">
+          <div class="fake-logo"></div>
+          <div class="fake-links"><div class="fake-link"></div><div class="fake-link"></div><div class="fake-link"></div></div>
+        </div>
+        <div class="fake-hero"><div class="fake-hero-txt">Azure Villas — Luxury Vacation Rentals</div></div>
+        <div class="fake-content"><div class="fake-card"></div><div class="fake-card"></div><div class="fake-card"></div></div>
+        <!-- Widget -->
+        <div class="chat-widget" id="chat-widget">
+          <div class="cw-bubble" id="cw-bubble">👋 Hi! Need help with a booking?</div>
+          <div class="cw-window" id="cw-window" style="display:none">
+            <div class="cw-hdr" id="cw-hdr" style="background:#6366F1">
+              <div class="cw-hdr-av">🏖️</div>
+              <div><div class="cw-hdr-n" id="cw-hdr-n">Azure Villas</div><div class="cw-hdr-s" id="cw-hdr-s">Maya · 24/7 AI concierge</div></div>
+              <div class="cw-hdr-ol"><div style="width:6px;height:6px;border-radius:50%;background:#4ADE80"></div>Online</div>
+            </div>
+            <div class="cw-msgs" id="cw-msgs"></div>
+            <div id="cw-powered" style="text-align:center;font-size:10px;color:#9CA3AF;padding:4px 0;background:#F9FAFB;border-top:1px solid #E5E7EB">Powered by RealCentral AI</div>
+            <div class="cw-inp-row">
+              <input class="cw-inp" id="cw-inp" placeholder="Ask anything..." onkeydown="if(event.key==='Enter')cwSend()">
+              <button class="cw-send" id="cw-send-btn" style="background:#6366F1" onclick="cwSend()">Send</button>
+            </div>
+          </div>
+          <button class="cw-fab" id="cw-fab" style="background:#6366F1" onclick="toggleWidget()">💬</button>
+        </div>
+      </div>
+      <!-- Embed code -->
+      <div class="code-area" style="width:100%;max-width:620px;border-radius:12px;margin-top:0">
+        <div class="code-lbl">
+          Embed code — paste before &lt;/body&gt; on your website
+          <button class="copy-code-btn" onclick="copyCode()">Copy code</button>
+        </div>
+        <div class="code-box" id="code-box">
+          <span class="code-cmt">&lt;!-- RealCentral AI Chat Widget --&gt;</span><br>
+          <span class="code-tag">&lt;script</span> <span class="code-attr">src=</span><span class="code-str">"https://cdn.realcentral.ai/widget.js"</span><br>
+          &nbsp;&nbsp;<span class="code-attr">data-client=</span><span class="code-str">"azure-villas-001"</span><br>
+          &nbsp;&nbsp;<span class="code-attr">data-agent=</span><span class="code-str">"Maya"</span><br>
+          &nbsp;&nbsp;<span class="code-attr">data-color=</span><span class="code-str">"#6366F1"</span><br>
+          &nbsp;&nbsp;<span class="code-attr">data-position=</span><span class="code-str">"bottom-right"</span><span class="code-tag">&gt;&lt;/script&gt;</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+</div><!-- end app -->
+
+<script>
+const CFG={
+  company:'Azure Villas',aiName:'Maya',loc:'Miami, Malibu & Tulum',
+  cin:'3:00 PM',cout:'11:00 AM',wnet:'AzureVillas_Guest',wpass:'Sunset2024',
+  pool:'7 AM–10 PM',park:'2 free spots',pets:'Small dogs under 20lbs · $75 pet fee',
+  cancel:'Full refund 7+ days · 50% refund 3–6 days · No refund <48hrs',
+  props:[{n:'Villa Azul',d:'4BR beachfront, sleeps 10',p:'$699/night'},
+         {n:'Palm Suite',d:'2BR pool view, sleeps 4',p:'$349/night'},
+         {n:'The Penthouse',d:'3BR city view, sleeps 6',p:'$499/night'}],
+  faqs:[{q:'Do you have a BBQ?',a:'Yes! All beachfront villas include a gas BBQ on the patio.'},
+        {q:'Do you allow airport transfers?',a:'We partner with a local concierge for transfers from $65 each way.'}]
+};
+
+function buildSys(ch){
+  const faqTxt=CFG.faqs.map(f=>`Q: ${f.q}\nA: ${f.a}`).join('\n');
+  const style={wa:'Warm & friendly, 1–2 paragraphs, 1–2 emojis.',sms:'Ultra-concise, max 2 sentences, plain text.',wc:'Professional and clean, no emoji.',inbox:'Professional and helpful. Match the channel tone the guest used.'};
+  return `You are ${CFG.aiName}, 24/7 AI concierge for ${CFG.company} (${CFG.loc}).
+Check-in: ${CFG.cin} | Check-out: ${CFG.cout} | WiFi: "${CFG.wnet}" pw: ${CFG.wpass}
+Pool: ${CFG.pool} | Parking: ${CFG.park} | Pets: ${CFG.pets}
+Cancellation: ${CFG.cancel}
+Properties: ${CFG.props.map(p=>`${p.n} — ${p.d} — ${p.p}`).join(' | ')}
+Deposit: 50% upfront, balance 30 days before. Min stay 3 nights (7 peak).
+FAQs:\n${faqTxt}
+Style: ${style[ch]||style.inbox} Keep under 90 words. End with a clear next step.`;
+}
+
+async function callAI(msgs,ch){
+  const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',
+    headers:{'Content-Type':'application/json','anthropic-dangerous-direct-browser-access':'true'},
+    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:buildSys(ch),messages:msgs})});
+  const data=await res.json();
+  return data.content?.[0]?.text||'Sorry, I had trouble responding. Please try again.';
+}
+
+// ══ CONVERSATIONS ══
+const chColor={wa:'#25D366',sms:'#30D158',wc:'#6366F1',ph:'#F59E0B'};
+const chIcon={wa:'💬',sms:'📱',wc:'🌐',ph:'📞'};
+const chName={wa:'WhatsApp',sms:'SMS',wc:'Web chat',ph:'Phone'};
+const ts=()=>new Date().toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit',hour12:false});
+const timeAgo=(m)=>m+'m ago';
+
+let convs=[
+  {id:1,guest:'Sarah Mitchell',emoji:'👩',ch:'wa',status:'booking',preview:'What is the total for July 4–8?',time:'2m',unread:true,
+   booking:{prop:'Villa Azul',cin:'Jul 4',cout:'Jul 8',guests:4,nights:4,total:'$2,796',status:'Inquiry'},
+   msgs:[{r:'u',t:"Hi! I'd love to book Villa Azul from July 4th to 8th for 4 guests. What's the total price?",ts:'14:22'}]},
+  {id:2,guest:'James Rodriguez',emoji:'👨',ch:'sms',status:'active',preview:'When can I check in early?',time:'8m',unread:true,
+   booking:{prop:'Palm Suite',cin:'Jul 12',cout:'Jul 15',guests:2,nights:3,total:'$1,047',status:'Confirmed'},
+   msgs:[{r:'u',t:'Hey, checking in on July 12. Can I get in early around 11am?',ts:'14:16'},{r:'a',t:"Hi James! Early check-in at 11am is available for a $50 fee, subject to availability. I'll note it on your reservation for Palm Suite. We'll confirm 24hrs before your arrival! Anything else you need? 🌴",ts:'14:16'}]},
+  {id:3,guest:'Emma Thompson',emoji:'👩‍🦰',ch:'wc',status:'new',preview:'Do you allow pets?',time:'15m',unread:true,
+   booking:null,
+   msgs:[{r:'u',t:'Hello! Do you allow pets? I have a small golden retriever, about 18 pounds.',ts:'14:09'}]},
+  {id:4,guest:'Michael Chen',emoji:'🧑',ch:'wa',status:'booking',preview:'Confirmed! See you soon 🎉',time:'32m',unread:false,
+   booking:{prop:'The Penthouse',cin:'Aug 1',cout:'Aug 7',guests:3,nights:6,total:'$2,994',status:'Confirmed'},
+   msgs:[{r:'u',t:'I want to book The Penthouse for Aug 1–7, 3 guests.',ts:'13:52'},{r:'a',t:'Great choice, Michael! 🌟 The Penthouse (3BR city view) from Aug 1–7 is available. Total: $2,994 (6 nights × $499). Deposit of $1,497 due today to confirm. Want me to send the booking link?',ts:'13:52'},{r:'u',t:'Yes please! Send it over.',ts:'13:54'},{r:'a',t:"Perfect! Booking link sent to your WhatsApp 📲 Once your deposit is confirmed you'll receive an official confirmation email. Looking forward to hosting you! 🏙️",ts:'13:54'},{r:'u',t:'Confirmed! See you soon 🎉',ts:'14:01'}]},
+  {id:5,guest:'Lisa Park',emoji:'👩‍💼',ch:'wc',status:'escalated',preview:'The AC is not working at all',time:'1h',unread:true,
+   booking:{prop:'Villa Azul',cin:'Jul 1',cout:'Jul 5',guests:5,nights:4,total:'$2,796',status:'Active stay'},
+   msgs:[{r:'u',t:'The air conditioning is not working at all. It\'s very hot and we have children. This is unacceptable.',ts:'13:08'},{r:'a',t:"I'm so sorry, Lisa — that's completely unacceptable and I'm escalating this to our maintenance team right now. 🚨 A technician will be at Villa Azul within the hour. I'm also alerting our guest relations manager. Thank you for your patience — we'll make this right.",ts:'13:08'},{r:'sys',t:'⚠️ Escalated to guest relations team · 13:08'},{r:'u',t:'OK thank you. Please hurry.',ts:'13:10'}]},
+  {id:6,guest:'Tom Bradley',emoji:'👨‍🦳',ch:'sms',status:'active',preview:'What are pool hours?',time:'2h',unread:false,
+   booking:{prop:'Palm Suite',cin:'Jul 20',cout:'Jul 24',guests:2,nights:4,total:'$1,396',status:'Upcoming'},
+   msgs:[{r:'u',t:'What are the pool hours?',ts:'12:08'},{r:'a',t:"Pool hours are 7 AM – 10 PM daily. Enjoy your upcoming stay at Palm Suite! 🏊",ts:'12:09'}]}
+];
+
+let activeCh='all',activeConvId=null,ctabMode='reply',aiDraft='';
+
+function renderConvList(filter='',chFilter='all'){
+  const el=document.getElementById('conv-list');
+  const list=convs.filter(c=>{
+    const chOk=chFilter==='all'||c.ch===chFilter;
+    const textOk=!filter||c.guest.toLowerCase().includes(filter)||c.preview.toLowerCase().includes(filter);
+    return chOk&&textOk;
+  });
+  el.innerHTML=list.map(c=>{
+    const tag=c.status==='booking'?'<span class="tag tag-book">Booking</span>':
+               c.status==='escalated'?'<span class="tag tag-esc">Escalated</span>':
+               c.status==='new'?'<span class="tag tag-new">New</span>':'<span class="tag tag-ai">AI ✓</span>';
+    return`<div class="conv-item${c.unread?' unread':''}${c.id===activeConvId?' on':''}" onclick="openConv(${c.id})">
+      ${c.unread?'<div class="unread-dot" style="margin-top:10px"></div>':''}
+      <div class="conv-av" style="background:${chColor[c.ch]}22;font-size:17px">${c.emoji}
+        <div class="ch-badge" style="background:${chColor[c.ch]};font-size:8px">${chIcon[c.ch]}</div>
+      </div>
+      <div class="conv-body">
+        <div class="conv-row1"><span class="conv-name">${c.guest}</span><span class="conv-time">${c.time}</span></div>
+        <div class="conv-preview">${c.preview}</div>
+        <div class="conv-tags">${tag}</div>
+      </div>
+    </div>`;
+  }).join('');
+  document.getElementById('unread-ct').textContent=convs.filter(c=>c.unread).length;
+}
+
+function openConv(id){
+  activeConvId=id;
+  const c=convs.find(x=>x.id===id);
+  if(!c)return;
+  c.unread=false;
+  renderConvList('',activeCh);
+  renderThread(c);
+  renderGuestPanel(c);
+  document.getElementById('composer').style.display='block';
+  // Auto-generate AI suggestion for unanswered msgs
+  const lastMsg=c.msgs[c.msgs.length-1];
+  if(lastMsg&&lastMsg.r==='u')genAiDraft(c);
+}
+
+function renderThread(c){
+  const el=document.getElementById('thread-msgs');
+  // Header
+  document.getElementById('thread-hdr').innerHTML=`
+    <div class="th-av" style="background:${chColor[c.ch]}22;font-size:16px">${c.emoji}</div>
+    <div><div class="th-name">${c.guest}</div><div class="th-sub">${chName[c.ch]} · ${c.status==='escalated'?'⚠️ Escalated':'AI handling'}</div></div>
+    <div class="th-r">
+      <div class="ai-toggle"><div class="ai-toggle-dot"></div><span>AI on</span></div>
+      <button class="th-btn" onclick="insertHistory('${c.id}')">📋 History</button>
+      <button class="th-btn esc" onclick="escalateConv()">🚨 Escalate</button>
+    </div>`;
+  // Messages
+  el.innerHTML=`<div class="sys-msg">Conversation started · ${chName[c.ch]}</div>`+
+    c.msgs.map(m=>{
+      if(m.r==='sys')return`<div class="sys-msg">${m.t}</div>`;
+      if(m.r==='u')return`<div class="msg-row"><div class="msg-av" style="background:${chColor[c.ch]}22;font-size:14px">${c.emoji}</div><div><div class="bubble in">${m.t.replace(/\n/g,'<br>')}</div><div class="msg-meta">${m.ts||''}</div></div></div>`;
+      return`<div class="msg-row out"><div class="msg-av" style="background:linear-gradient(135deg,#6366F1,#8B5CF6);font-size:11px;color:white;font-weight:600">AI</div><div><div class="ai-label">Maya · AI</div><div class="bubble ai-out">${m.t.replace(/\n/g,'<br>')}</div><div class="msg-meta">${m.ts||''} · Delivered</div></div></div>`;
+    }).join('');
+  el.scrollTop=el.scrollHeight;
+}
+
+async function genAiDraft(c){
+  const suggest=document.getElementById('ai-suggest');
+  const suggestTxt=document.getElementById('ai-suggest-txt');
+  suggest.style.display='flex';
+  suggestTxt.textContent='🤖 AI is drafting a response...';
+  aiDraft='';
+  try{
+    const apiMsgs=c.msgs.filter(m=>m.r==='u'||m.r==='a').map(m=>({role:m.r==='u'?'user':'assistant',content:m.t}));
+    const reply=await callAI(apiMsgs,c.ch);
+    aiDraft=reply;
+    suggestTxt.textContent=reply.substring(0,120)+(reply.length>120?'…':'');
+  }catch(e){suggest.style.display='none';}
+}
+
+function useAiSuggest(){
+  document.getElementById('compose-inp').value=aiDraft;
+  updateCharCount();
+}
+
+async function sendReply(){
+  const inp=document.getElementById('compose-inp');
+  const txt=inp.value.trim();if(!txt)return;
+  const c=convs.find(x=>x.id===activeConvId);if(!c)return;
+  const btn=document.getElementById('send-btn');btn.disabled=true;btn.textContent='Sending...';
+  c.msgs.push({r:'a',t:txt,ts:ts()});
+  c.preview=txt.substring(0,40)+(txt.length>40?'…':'');
+  c.time='now';c.status='active';
+  inp.value='';updateCharCount();
+  document.getElementById('ai-suggest').style.display='none';
+  renderThread(c);renderConvList('',activeCh);
+  btn.disabled=false;btn.textContent='Send ➤';
+}
+
+function handleCompose(e){if(e.key==='Enter'&&(e.metaKey||e.ctrlKey))sendReply();}
+function updateCharCount(){const v=document.getElementById('compose-inp').value.length;document.getElementById('char-ct').textContent=v+' / 500';}
+function setCTab(el,mode){ctabMode=mode;document.querySelectorAll('.ctab').forEach(t=>t.classList.remove('on'));el.classList.add('on');const inp=document.getElementById('compose-inp');inp.placeholder=mode==='note'?'Internal note (not sent to guest)...':mode==='ai'?'Describe what to reply and AI will draft it...':'Type a reply...';}
+
+async function aiRephrase(){
+  const inp=document.getElementById('compose-inp');const txt=inp.value.trim();if(!txt)return;
+  inp.value='Rephrasing...';
+  const c=convs.find(x=>x.id===activeConvId);
+  try{const r=await callAI([{role:'user',content:`Rephrase this reply more professionally for a vacation rental company: "${txt}"`}],(c?.ch||'wc'));inp.value=r;updateCharCount();}
+  catch(e){inp.value=txt;}
+}
+
+function insertQuick(){
+  const replies=["Check-in is at 3:00 PM and check-out is at 11:00 AM.","Your WiFi network is AzureVillas_Guest and the password is Sunset2024.","We'd love to help! Can you share your preferred dates and number of guests?","I'm escalating this to our guest relations team — someone will contact you within 15 minutes."];
+  const r=replies[Math.floor(Math.random()*replies.length)];
+  document.getElementById('compose-inp').value=r;updateCharCount();
+}
+
+function escalateConv(){
+  const c=convs.find(x=>x.id===activeConvId);if(!c)return;
+  c.status='escalated';c.msgs.push({r:'sys',t:'⚠️ Escalated to guest relations team · '+ts()});
+  renderThread(c);renderConvList('',activeCh);renderGuestPanel(c);
+}
+
+function renderGuestPanel(c){
+  const el=document.getElementById('guest-panel');
+  const statMap={new:'<span class="status-chip sc-new">● New lead</span>',active:'<span class="status-chip sc-active">● Active guest</span>',booking:'<span class="status-chip sc-book">● Booking inquiry</span>',escalated:'<span class="status-chip sc-esc">⚠️ Escalated</span>'};
+  const bookHtml=c.booking?`<div class="gp-section"><div class="gp-lbl">Booking</div><div class="book-card"><div class="book-prop">🏠 ${c.booking.prop}</div><div class="book-row"><span>Check-in</span><span class="book-val">${c.booking.cin}</span></div><div class="book-row"><span>Check-out</span><span class="book-val">${c.booking.cout}</span></div><div class="book-row"><span>Guests</span><span class="book-val">${c.booking.guests}</span></div><div class="book-row"><span>Total</span><span class="book-val">${c.booking.total}</span></div><div class="book-row"><span>Status</span><span class="book-val" style="color:var(--gr)">${c.booking.status}</span></div></div></div>`:'';
+  el.innerHTML=`
+    <div class="gp-section">
+      <div class="gp-av" style="background:${chColor[c.ch]}22">${c.emoji}</div>
+      <div class="gp-name">${c.guest}</div>
+      <div class="gp-ch">${chIcon[c.ch]} ${chName[c.ch]}</div>
+      <div style="text-align:center">${statMap[c.status]||''}</div>
+    </div>
+    <div class="gp-section">
+      <div class="gp-lbl">Guest info</div>
+      <div class="gp-row"><span class="gp-key">Channel</span><span class="gp-val">${chName[c.ch]}</span></div>
+      <div class="gp-row"><span class="gp-key">Messages</span><span class="gp-val">${c.msgs.filter(m=>m.r!=='sys').length} total</span></div>
+      <div class="gp-row"><span class="gp-key">AI handled</span><span class="gp-val" style="color:var(--gr)">✓ Yes</span></div>
+      <div class="gp-row"><span class="gp-key">Response time</span><span class="gp-val">&lt; 2s</span></div>
+    </div>
+    ${bookHtml}
+    <div class="gp-section">
+      <div class="gp-lbl">Internal notes</div>
+      <textarea class="notes-inp" placeholder="Add a private note about this guest..."></textarea>
+    </div>
+    <div class="gp-section">
+      <div class="gp-lbl">Quick actions</div>
+      <div class="quick-acts">
+        <button class="qa" onclick="fire('Send booking confirmation')">📧 Send booking confirmation</button>
+        <button class="qa" onclick="fire('Send check-in instructions')">🔑 Send check-in instructions</button>
+        <button class="qa" onclick="fire('Request review')">⭐ Request review</button>
+        <button class="qa" onclick="escalateConv()">🚨 Escalate to team</button>
+      </div>
+    </div>`;
+}
+
+function fire(action){
+  const c=convs.find(x=>x.id===activeConvId);if(!c)return;
+  document.getElementById('compose-inp').value=action+' — ';updateCharCount();
+  document.getElementById('compose-inp').focus();
+}
+
+function filterCh(ch,el){
+  activeCh=ch;
+  document.querySelectorAll('.cf').forEach(b=>b.classList.remove('on'));el.classList.add('on');
+  renderConvList('',ch);
+}
+function filterConvs(q){renderConvList(q,activeCh);}
+
+// ══ SECTION NAV ══
+function showSec(name,el){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));
+  document.getElementById('sec-'+name).classList.add('on');
+  document.querySelectorAll('.tnav').forEach(t=>t.classList.remove('on'));el.classList.add('on');
+}
+
+// ══ WIDGET ══
+let widgetOpen=false,widgetColor='#6366F1';
+const widgetSys=()=>`You are Maya, a friendly AI concierge for Azure Villas. Answer questions about bookings, availability, check-in times (3PM), WiFi (AzureVillas_Guest / Sunset2024), pets (small dogs OK, $75 fee), pool (7AM-10PM). Be warm and brief (under 60 words). End with a question or next step.`;
+let cwMsgs=[];
+
+function initWidget(){
+  const cwMsgsEl=document.getElementById('cw-msgs');
+  cwMsgs=[{role:'assistant',content:'Hi! 👋 I\'m Maya, your 24/7 AI concierge at Azure Villas. Ask me anything about bookings, check-in, or your stay!'}];
+  cwMsgsEl.innerHTML=`<div class="cwm r">Hi! 👋 I'm Maya, your 24/7 AI concierge at Azure Villas. Ask me anything about bookings, check-in, or your stay!</div>`;
+}
+
+function toggleWidget(){
+  widgetOpen=!widgetOpen;
+  document.getElementById('cw-window').style.display=widgetOpen?'block':'none';
+  document.getElementById('cw-bubble').style.display=widgetOpen?'none':'block';
+  document.getElementById('cw-fab').textContent=widgetOpen?'✕':'💬';
+  if(widgetOpen&&!cwMsgs.length)initWidget();
+}
+
+async function cwSend(){
+  const inp=document.getElementById('cw-inp');const txt=inp.value.trim();if(!txt)return;inp.value='';
+  const el=document.getElementById('cw-msgs');
+  cwMsgs.push({role:'user',content:txt});
+  el.innerHTML+=`<div class="cwm s" style="background:${widgetColor}">${txt}</div>`;
+  el.innerHTML+=`<div class="cwm r" id="cw-typing"><span style="display:flex;gap:3px;padding:2px 0"><span class="td"></span><span class="td" style="animation-delay:.15s"></span><span class="td" style="animation-delay:.3s"></span></span></div>`;
+  el.scrollTop=el.scrollHeight;
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',
+      headers:{'Content-Type':'application/json','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:500,system:widgetSys(),messages:cwMsgs})});
+    const data=await res.json();
+    const reply=data.content?.[0]?.text||'Let me connect you with our team!';
+    cwMsgs.push({role:'assistant',content:reply});
+    document.getElementById('cw-typing').outerHTML=`<div class="cwm r">${reply.replace(/\n/g,'<br>')}</div>`;
+    el.scrollTop=el.scrollHeight;
+  }catch(e){document.getElementById('cw-typing').outerHTML=`<div class="cwm r">Connection error — please try again.</div>`;}
+}
+
+function updateWidget(){
+  const name=document.getElementById('wc-name').value;
+  const agent=document.getElementById('wc-agent').value;
+  const welcome=document.getElementById('wc-welcome').value;
+  document.getElementById('cw-hdr-n').textContent=name;
+  document.getElementById('cw-hdr-s').textContent=agent+' · 24/7 AI concierge';
+  document.getElementById('cw-hdr').style.background=widgetColor;
+  document.getElementById('cw-send-btn').style.background=widgetColor;
+  document.getElementById('cw-fab').style.background=widgetColor;
+  document.getElementById('cw-bubble').textContent='👋 '+welcome.substring(0,40)+(welcome.length>40?'…':'');
+  // Update code
+  const slug=name.toLowerCase().replace(/\s+/g,'-');
+  document.getElementById('code-box').innerHTML=`<span class="code-cmt">&lt;!-- RealCentral AI Chat Widget --&gt;</span><br><span class="code-tag">&lt;script</span> <span class="code-attr">src=</span><span class="code-str">"https://cdn.realcentral.ai/widget.js"</span><br>&nbsp;&nbsp;<span class="code-attr">data-client=</span><span class="code-str">"${slug}-001"</span><br>&nbsp;&nbsp;<span class="code-attr">data-agent=</span><span class="code-str">"${agent}"</span><br>&nbsp;&nbsp;<span class="code-attr">data-color=</span><span class="code-str">"${widgetColor}"</span><br>&nbsp;&nbsp;<span class="code-attr">data-position=</span><span class="code-str">"bottom-right"</span><span class="code-tag">&gt;&lt;/script&gt;</span>`;
+}
+
+function setColor(el){
+  document.querySelectorAll('.color-swatch').forEach(s=>s.classList.remove('sel'));el.classList.add('sel');
+  widgetColor=el.dataset.c;updateWidget();
+}
+
+function toggleW(key,el){el.querySelector('.tog-t').classList.toggle('on');}
+
+function copyCode(){
+  const code=`<!-- RealCentral AI Chat Widget -->\n<script src="https://cdn.realcentral.ai/widget.js"\n  data-client="${document.getElementById('wc-name').value.toLowerCase().replace(/\s+/g,'-')}-001"\n  data-agent="${document.getElementById('wc-agent').value}"\n  data-color="${widgetColor}"\n  data-position="bottom-right"><\/script>`;
+  navigator.clipboard.writeText(code).then(()=>{const b=document.querySelector('.copy-code-btn');b.textContent='✓ Copied!';setTimeout(()=>b.textContent='Copy code',2000);});
+}
+
+// ── INIT ──
+renderConvList();
+initWidget();
+</script>
+</html>
